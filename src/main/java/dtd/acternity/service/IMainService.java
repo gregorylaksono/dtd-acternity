@@ -9,6 +9,6 @@ public interface IMainService {
 	public String saveBookingRequestData(BookingTempDTD bookingData);
 	public Boolean customerChooseRate(Long user_id, Long rate_id, String booking_id);
 	public Boolean courierConfirmPickUp(CourierOffer courierOffer);
-	public Boolean courierDoPickup(Double latitude, Double longitude, Long courier_id, String booking_id, String qr);
+	public Boolean doPackageHandover(Double latitude, Double longitude, Long courier_id, String booking_id, String qr);
 	public Boolean deliverBooking(Double lat, Double lon, String booking_id, String user_id);
 }

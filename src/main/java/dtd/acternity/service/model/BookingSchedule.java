@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="s_booking_schedule_dtd")
 public class BookingSchedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,6 +21,10 @@ public class BookingSchedule {
 	private String total_from;
 	
 	private String total_to;
+	
+	private String pickup_courier;
+	
+	private String delivery_courier;
 
 	public Long getId() {
 		return id;
@@ -62,6 +65,23 @@ public class BookingSchedule {
 	public void setTotal_to(String total_to) {
 		this.total_to = total_to;
 	}
+
+	public String getPickup_courier() {
+		return pickup_courier;
+	}
+
+	public void setPickup_courier(String pickup_courier) {
+		this.pickup_courier = pickup_courier;
+	}
+
+	public String getDelivery_courier() {
+		return delivery_courier;
+	}
+
+	public void setDelivery_courier(String delivery_courier) {
+		this.delivery_courier = delivery_courier;
+	}
+	
 	
 	
 }

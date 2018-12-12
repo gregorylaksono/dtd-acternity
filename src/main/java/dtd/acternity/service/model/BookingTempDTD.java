@@ -36,7 +36,6 @@ public class BookingTempDTD {
 	private Double pickup_price;
 	private Double deliver_price;
 	private Date deliverDate;
-	private String sessionKey;
 	
 	public String getAddress_from() {
 		return address_from;
@@ -134,11 +133,6 @@ public class BookingTempDTD {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getSessionKey() {
-		return sessionKey;
-	}
-	public void setSessionKey(String sessionKey) {
-		this.sessionKey = sessionKey;
-	}
+
 	
 }

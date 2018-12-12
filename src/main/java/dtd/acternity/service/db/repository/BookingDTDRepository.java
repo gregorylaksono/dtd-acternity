@@ -13,7 +13,7 @@ import dtd.acternity.service.model.BookingTempDTD;
 public interface BookingDTDRepository extends JpaRepository<BookingTempDTD, String> {
 	
 	@Query("SELECT d FROM BookingTempDTD d where d.booking_id = ?1")
-	public BookingTempDTD getDataById(String booking_id);
+	public BookingTempDTD findDataById(String booking_id);
 
 	
 }

@@ -82,6 +82,88 @@ public class MainServiceImpl implements IMainService {
 
 		return id;
 	}
+
+
+	public Boolean courierConfirmPickUp(CourierOffer courierOffer) {
+		if(courierOffer.getAcceptedOn() != null){
+			BookingTempDTD data = bookingTempRepository.findDataById(courierOffer.getBooking_id());
+			if(courierOffer.isPickup() && data.getCourier_from_id() != null) return false;
+			else if(!courierOffer.isPickup() && data.getCourier_to_id() != null) return false;
+			
+			CourierOffer offer = courierOfferRepository.findById(courierOffer.getId()).get();
+			offer.setAcceptedOn(new Date());
+			courierOfferRepository.save(offer);
+			
+			if(courierOffer.isPickup()) {
+				data.setCourier_from_id(String.valueOf(courierOffer.getCourier().getId()));
+				data.setPickup_price(courierOffer.getPrice());
+			}
+			else{
+				 data.setCourier_to_id(String.valueOf(courierOffer.getCourier().getId()));
+				 data.setDeliver_price(courierOffer.getPrice());
+			}
+			
+			
+			bookingTempRepository.save(data);
+			List<CourierOffer> offers = courierOfferRepository.findCouriersByBookingData(data.getBooking_id());
+			if(offers.size() == 0){
+				List<ScheduleDoorToDoor> scheduleData = findSchedule(data);
+				List<CourierOffer> couriers = courierOfferRepository.findCouriersByBookingData(data.getBooking_id());
+				scheduleData = filterData(scheduleData, couriers);
+				saveBookingSchedule(data, scheduleData);
+				pushNotificationService.searchAndsendScheduleToUser(scheduleData, courierOffer.getBooking_id());
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public Boolean doPackageHandover(Double latitude, Double longitude, Long subject_id, String booking_id, String qr) {
+		BookingTempDTD dataTemp = bookingTempRepository.findDataById(booking_id);
+		if(dataTemp.getQr_data().equals(qr)){
+			BookingStageDTD bookingStageData = buildBookingStage(latitude, longitude, subject_id, booking_id); 
+			bookingStageRepository.save(bookingStageData);
+			return true;
+		}
+		return false;
+	}
+
+	public Boolean customerChooseRate(Long user_id, Long rate_id, String booking_id) {
+		//		Schedule l = scheduleDataService.getDataById(rate_id);
+		BookingTempDTD temp = bookingTempRepository.findDataById(booking_id);
+		temp.setRate_id(String.valueOf(rate_id));
+		List<CourierOffer> allOffer = courierOfferRepository.findAll();
+
+		bookingTempRepository.save(temp);
+		ISession session = loginService.login("bold", "ffw");
+		Map result = mobileService.createBookingDoorToDoorAct(session.getUser(), temp.getBooking_id(), 
+				String.valueOf(rate_id), true);
+//		pushNotificationService.sendPickupOrderToCourier(c, temp);
+		result.size();
+		return true;
+	}
+
+	public Boolean courierUpdatePosition(Long courier_id, Double latitude, Double longitude) {
+		Courier courier = courierDataService.getCourierRepository().findById(courier_id).get();
+		if(courier.getLocation() == null){
+			Location l = new Location("","", 0D,0D);
+			courier.setLocation(l);
+		}
+		courier.getLocation().setLatitude(latitude);
+		courier.getLocation().setLongitude(longitude);
+		courierDataService.getCourierRepository().save(courier);
+		return true;
+	}
+
+	public Boolean deliverBooking(Double lat, Double lon, String booking_id, String user_id) {
+		BookingTempDTD booking = bookingTempRepository.findDataById(booking_id);
+		booking.setDeliverDate(new Date());
+		BookingStageDTD stage = buildBookingStage(lat, lon, Long.parseLong(user_id), booking_id);
+		bookingStageRepository.save(stage);
+		bookingTempRepository.save(booking);
+		return true;
+	}
+	
 	private List<CourierOffer> createCourierOffer(BookingTempDTD bookingData, boolean isPickup) {
 		Location location = null;
 		String address = "";
@@ -119,48 +201,14 @@ public class MainServiceImpl implements IMainService {
 		return offers;
 	}
 
-	public Boolean courierConfirmPickUp(CourierOffer courierOffer) {
-		if(courierOffer.getAcceptedOn() != null){
-			BookingTempDTD data = bookingTempRepository.getDataById(courierOffer.getBooking_id());
-			if(courierOffer.isPickup() && data.getCourier_from_id() != null) return false;
-			else if(!courierOffer.isPickup() && data.getCourier_to_id() != null) return false;
-			
-			CourierOffer offer = courierOfferRepository.findById(courierOffer.getId()).get();
-			offer.setAcceptedOn(new Date());
-			courierOfferRepository.save(offer);
-			
-			if(courierOffer.isPickup()) {
-				data.setCourier_from_id(String.valueOf(courierOffer.getCourier().getId()));
-				data.setPickup_price(courierOffer.getPrice());
-			}
-			else{
-				 data.setCourier_to_id(String.valueOf(courierOffer.getCourier().getId()));
-				 data.setDeliver_price(courierOffer.getPrice());
-			}
-			
-			
-			bookingTempRepository.save(data);
-			List<CourierOffer> offers = courierOfferRepository.findCouriersByBookingData(data.getBooking_id());
-			if(offers.size() == 0){
-				List<ScheduleDoorToDoor> scheduleData = findSchedule(data);
-				List<CourierOffer> couriers = courierOfferRepository.findCouriersByBookingData(data.getBooking_id());
-				scheduleData = filterData(scheduleData, couriers);
-				saveBookingSchedule(data, scheduleData);
-				pushNotificationService.searchAndsendScheduleToUser(scheduleData, courierOffer.getBooking_id());
-			}
-			return true;
-		}
-		return false;
-	}
-	
 	private void saveBookingSchedule(BookingTempDTD data, List<ScheduleDoorToDoor> schedule){
+		
 		for(ScheduleDoorToDoor d: schedule){
 			BookingSchedule s = new BookingSchedule();
 			s.setBooking_id(data.getBooking_id());
 			s.setRate_id(d.getRateId());
 			s.setTotal_from(d.getTotal_fee_from());
 			s.setTotal_to(d.getTotal_fee_to());
-			
 			bookingScheduleRepository.save(s);
 		}
 	}
@@ -191,29 +239,6 @@ public class MainServiceImpl implements IMainService {
 				String.valueOf(data.getTo().getLatitude()), String.valueOf(data.getTo().getLongitude()),"");
 		return result;
 	}
-	
-	public Boolean courierDoPickup(Double latitude, Double longitude, Long courier_id, String booking_id, String qr) {
-		BookingTempDTD dataTemp = bookingTempRepository.getDataById(booking_id);
-		if(dataTemp.getQr_data().equals(qr)){
-			BookingStageDTD bookingStageData = buildBookingStage(latitude, longitude, courier_id, booking_id); 
-			bookingStageRepository.save(bookingStageData);
-			return true;
-		}
-		return false;
-	}
-
-	public Boolean customerChooseRate(Long user_id, Long rate_id, String booking_id) {
-		//		Schedule l = scheduleDataService.getDataById(rate_id);
-		BookingTempDTD temp = bookingTempRepository.getDataById(booking_id);
-		temp.setRate_id(String.valueOf(rate_id));
-		List<CourierOffer> allOffer = courierOfferRepository.findAll();
-
-		bookingTempRepository.save(temp);
-		ISession session = loginService.login("bold", "ffw");
-		Map result = mobileService.createBookingDoorToDoor(session.getUser(), temp.getSessionKey(), String.valueOf(rate_id), true);
-//		pushNotificationService.sendPickupOrderToCourier(c, temp);
-		return true;
-	}
 
 
 	private  BookingStageDTD buildBookingStage(Double latitude, Double longitude, Long user_id, String booking_id){
@@ -222,32 +247,10 @@ public class MainServiceImpl implements IMainService {
 		data.setLatitude(latitude);
 		data.setLongitude(longitude);
 		data.setAdd_id_created_by(user_id);
-		BookingTempDTD bookingData = bookingTempRepository.getDataById(booking_id);
+		BookingTempDTD bookingData = bookingTempRepository.findDataById(booking_id);
 		data.setBookingData(bookingData);
 		data.setCreatedOn(new Date());
 		return data;
 	}
-
-	public Boolean courierUpdatePosition(Long courier_id, Double latitude, Double longitude) {
-		Courier courier = courierDataService.getCourierRepository().findById(courier_id).get();
-		if(courier.getLocation() == null){
-			Location l = new Location("","", 0D,0D);
-			courier.setLocation(l);
-		}
-		courier.getLocation().setLatitude(latitude);
-		courier.getLocation().setLongitude(longitude);
-		courierDataService.getCourierRepository().save(courier);
-		return true;
-	}
-
-	public Boolean deliverBooking(Double lat, Double lon, String booking_id, String user_id) {
-		BookingTempDTD booking = bookingTempRepository.getDataById(booking_id);
-		booking.setDeliverDate(new Date());
-		BookingStageDTD stage = buildBookingStage(lat, lon, Long.parseLong(user_id), booking_id);
-		bookingStageRepository.save(stage);
-		bookingTempRepository.save(booking);
-		return true;
-	}
-
 
 }

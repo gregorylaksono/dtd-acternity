@@ -31,10 +31,13 @@ import de.act.common.interfaces.Webservice;
 import de.act.common.types.User;
 import de.act.common.types.nonstaticobjects.CourierInformation;
 import dtd.acternity.service.IMainService;
+import dtd.acternity.service.db.repository.BookingDTDRepository;
 import dtd.acternity.service.db.repository.BookingScheduleRepository;
+import dtd.acternity.service.db.repository.BookingStageRepository;
 import dtd.acternity.service.db.repository.CourierOfferRepository;
 import dtd.acternity.service.launcher.ApplicationLauncher;
 import dtd.acternity.service.model.BookingSchedule;
+import dtd.acternity.service.model.BookingStageDTD;
 import dtd.acternity.service.model.BookingTempDTD;
 import dtd.acternity.service.model.CourierOffer;
 import dtd.acternity.service.model.Location;
@@ -82,6 +85,12 @@ public class ACTDemoApplicationTests {
 	@Autowired
 	private BookingScheduleRepository bookingScheduleRepository;
 	
+	@Autowired
+	private BookingDTDRepository bookingTempRepository;
+	
+	@Autowired
+	private BookingStageRepository bookingStageRepository;
+	
 	@Test
 	@Rollback(value=false)
 	public void contextLoads() {
@@ -123,6 +132,22 @@ public class ACTDemoApplicationTests {
 		mainService.courierConfirmPickUp(offerDelivery);
 		List<BookingSchedule> bookingSchedules = bookingScheduleRepository.findBookingScheduleByBookingId(bookingId);
 		Assert.assertTrue(bookingSchedules.size() > 0);
+		
+		mainService.customerChooseRate(123451042L, Long.parseLong(bookingSchedules.get(0).getRate_id()), bookingId);
+		
+		BookingTempDTD data = bookingTempRepository.findDataById(bookingId);
+		Boolean isPickup = mainService.doPackageHandover(Double.parseDouble(fromLat), Double.parseDouble(fromLon), 
+				Long.parseLong(data.getCourier_from_id()), data.getBooking_id(), data.getQr_data());
+		
+		Assert.assertTrue(isPickup);
+		
+		Assert.assertTrue(mainService.doPackageHandover(Double.parseDouble(toLat), Double.parseDouble(toLon), 
+				Long.parseLong(data.getCourier_to_id()), data.getBooking_id(), data.getQr_data()));
+		Assert.assertTrue(mainService.deliverBooking(Double.parseDouble(toLat), Double.parseDouble(toLon), 
+				data.getBooking_id(), "123451432"));
+		List<BookingStageDTD> stages = bookingStageRepository.findByBookingData(data);
+		Assert.assertTrue(stages.size() == 3);
+		
 //		
 //		//		Integer resultFrom = mobileService.saveUserDummy( session.getUser(),  "c",  "customer 1 test",  "customer 1 test",  "Am Sportpl. 3",  "Freising",  "",  "",  "",
 //		//				 "Germany",  fromLon,  fromLat);
