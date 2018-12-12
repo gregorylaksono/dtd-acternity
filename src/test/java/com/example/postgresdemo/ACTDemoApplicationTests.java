@@ -109,8 +109,7 @@ public class ACTDemoApplicationTests {
 		bookingData.setDeliverDate(new Date());
 		bookingData.setFrom(new Location("123451042", "customer 1 test", Double.parseDouble(fromLat), Double.parseDouble(fromLon)));
 		bookingData.setTo(new Location("123451432", "customer 2 test2", Double.parseDouble(toLat), Double.parseDouble(toLon)));
-		bookingData.setItem_dimension("1354:0:asses |AVI|1|Each|1.0|1|1|1|1.0|| | | | | | ");
-		bookingData.setItem_weight("");
+		bookingData.setItemDescription("1354:0:asses |AVI|1|Each|1.0|1|1|1|1.0|| | | | | | ");
 		
 		
 		String bookingId = mainService.saveBookingRequestData(bookingData);

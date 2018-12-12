@@ -20,8 +20,7 @@ public class BookingStageDTD {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "oid", columnDefinition = "serial")
 	private Long id;
-	
-	
+
 	private Double latitude;
 	private Double longitude;
 	private Long add_id_created_by;

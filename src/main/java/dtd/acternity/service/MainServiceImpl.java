@@ -86,7 +86,7 @@ public class MainServiceImpl implements IMainService {
 
 	public Boolean courierConfirmPickUp(CourierOffer courierOffer) {
 		if(courierOffer.getAcceptedOn() != null){
-			BookingTempDTD data = bookingTempRepository.findDataById(courierOffer.getBooking_id());
+			BookingTempDTD data = bookingTempRepository.findDataById(courierOffer.getBookingData().getBooking_id());
 			if(courierOffer.isPickup() && data.getCourier_from_id() != null) return false;
 			else if(!courierOffer.isPickup() && data.getCourier_to_id() != null) return false;
 			
@@ -111,7 +111,7 @@ public class MainServiceImpl implements IMainService {
 				List<CourierOffer> couriers = courierOfferRepository.findCouriersByBookingData(data.getBooking_id());
 				scheduleData = filterData(scheduleData, couriers);
 				saveBookingSchedule(data, scheduleData);
-				pushNotificationService.searchAndsendScheduleToUser(scheduleData, courierOffer.getBooking_id());
+				pushNotificationService.searchAndsendScheduleToUser(scheduleData, courierOffer.getBookingData().getBooking_id());
 			}
 			return true;
 		}
@@ -177,6 +177,7 @@ public class MainServiceImpl implements IMainService {
 		}
 		List<CourierInformation> couriersInfo = courierDataService.getCourierBasedOnCoordinate(location);
 		List<CourierOffer> offers = new ArrayList();
+		BookingTempDTD data = bookingTempRepository.findDataById(bookingData.getBooking_id());
 		for(CourierInformation ci: couriersInfo){
 			if(ci.getRatePer() == null) continue;
 			
@@ -194,7 +195,7 @@ public class MainServiceImpl implements IMainService {
 			double distance = restConnectionUtil.getDistanceByTwoPoints(bookingData.getFrom(), courierLocation) / 1000;
 			double price =  ci.getRatePer() * distance;
 			offer.setPrice(price);
-			offer.setBookingId(bookingData.getBooking_id());
+			offer.setBookingData(data);
 			offers.add(offer);
 
 		}
@@ -232,7 +233,7 @@ public class MainServiceImpl implements IMainService {
 		List<ScheduleDoorToDoor> result = mobileService.getDepAndArrAndRateByDistanceDepartureToDestinationsDTD(data.getBooking_id(), 
 				data.getFrom().getAddress(), data.getTo().getAddress(),
 				now ,c.getTime(), 
-				new String[]{data.getItem_dimension()}, session.getUser(), 
+				new String[]{data.getItemDescription()}, session.getUser(), 
 				Integer.parseInt(data.getFrom().getAdd_id_target()), 
 				String.valueOf(data.getFrom().getLatitude()), String.valueOf(data.getFrom().getLongitude()),
 				Integer.parseInt(data.getTo().getAdd_id_target()),
@@ -251,6 +252,19 @@ public class MainServiceImpl implements IMainService {
 		data.setBookingData(bookingData);
 		data.setCreatedOn(new Date());
 		return data;
+	}
+
+
+	@Override
+	public Boolean registerUser(String name, String email, String street, String city, String telp, String country,
+			Double latitude, Double longitude) {
+		ISession session = loginService.login("bold", "ffw");
+		Integer result = mobileService.saveUserDummy(session.getUser(), "c", name, name,street,city, "",telp,email,
+				country, String.valueOf(longitude), String.valueOf(latitude));
+		
+		if(result > 0)return true;
+		
+		return false;
 	}
 
 }

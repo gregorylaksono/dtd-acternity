@@ -1,40 +1,21 @@
-package dtd.acternity.service.model;
+package dtd.acternity.dtd;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
-@Entity
-public class BookingTempDTD {
-	public enum BookingState{
-		WAITING_COURIER_CONFIRM, 
-		COURIER_PICKUP, 
-		DELIVERY, 
-		DELIVERED, 
-		UNKNOWN;
-	}
-	
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "oid", columnDefinition = "serial")
-	private Long id;
+import dtd.acternity.service.model.Location;
+
+public class BookingData {
+
 	private String booking_id;
 	private String address_from;
 	private String address_to;
-	
-	@Transient
+
 	private Location from;
 	
-	@Transient
 	private Location to;
-	private String itemDescription;
+	private String item_weight;
+	private String item_dimension;
 	private String courier_from_id;
 	private String courier_to_id;
 	private Date expiration_date;
@@ -44,6 +25,13 @@ public class BookingTempDTD {
 	private Double deliver_price;
 	private Date deliverDate;
 	
+	
+	public String getBooking_id() {
+		return booking_id;
+	}
+	public void setBooking_id(String booking_id) {
+		this.booking_id = booking_id;
+	}
 	public String getAddress_from() {
 		return address_from;
 	}
@@ -56,7 +44,30 @@ public class BookingTempDTD {
 	public void setAddress_to(String address_to) {
 		this.address_to = address_to;
 	}
-
+	public Location getFrom() {
+		return from;
+	}
+	public void setFrom(Location from) {
+		this.from = from;
+	}
+	public Location getTo() {
+		return to;
+	}
+	public void setTo(Location to) {
+		this.to = to;
+	}
+	public String getItem_weight() {
+		return item_weight;
+	}
+	public void setItem_weight(String item_weight) {
+		this.item_weight = item_weight;
+	}
+	public String getItem_dimension() {
+		return item_dimension;
+	}
+	public void setItem_dimension(String item_dimension) {
+		this.item_dimension = item_dimension;
+	}
 	public String getCourier_from_id() {
 		return courier_from_id;
 	}
@@ -69,14 +80,8 @@ public class BookingTempDTD {
 	public void setCourier_to_id(String courier_to_id) {
 		this.courier_to_id = courier_to_id;
 	}
-	public String getBooking_id() {
-		return booking_id;
-	}
-	public void setBooking_id(String booking_id) {
-		this.booking_id = booking_id;
-	}
 	public Date getExpiration_date() {
-		return (Date) expiration_date.clone();
+		return expiration_date;
 	}
 	public void setExpiration_date(Date expiration_date) {
 		this.expiration_date = expiration_date;
@@ -93,29 +98,11 @@ public class BookingTempDTD {
 	public void setQr_data(String qr_data) {
 		this.qr_data = qr_data;
 	}
-	public Location getFrom() {
-		return from;
-	}
-	public void setFrom(Location from) {
-		this.from = from;
-	}
-	public Location getTo() {
-		return to;
-	}
-	public void setTo(Location to) {
-		this.to = to;
-	}
 	public Double getPickup_price() {
 		return pickup_price;
 	}
 	public void setPickup_price(Double pickup_price) {
 		this.pickup_price = pickup_price;
-	}
-	public Date getDeliverDate() {
-		return deliverDate;
-	}
-	public void setDeliverDate(Date deliverDate) {
-		this.deliverDate = deliverDate;
 	}
 	public Double getDeliver_price() {
 		return deliver_price;
@@ -123,18 +110,12 @@ public class BookingTempDTD {
 	public void setDeliver_price(Double deliver_price) {
 		this.deliver_price = deliver_price;
 	}
-	public Long getId() {
-		return id;
+	public Date getDeliverDate() {
+		return deliverDate;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public void setDeliverDate(Date deliverDate) {
+		this.deliverDate = deliverDate;
 	}
-	public String getItemDescription() {
-		return itemDescription;
-	}
-	public void setItemDescription(String itemDescription) {
-		this.itemDescription = itemDescription;
-	}
-
+	
 	
 }

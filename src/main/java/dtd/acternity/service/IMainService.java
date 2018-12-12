@@ -11,4 +11,6 @@ public interface IMainService {
 	public Boolean courierConfirmPickUp(CourierOffer courierOffer);
 	public Boolean doPackageHandover(Double latitude, Double longitude, Long courier_id, String booking_id, String qr);
 	public Boolean deliverBooking(Double lat, Double lon, String booking_id, String user_id);
+	public Boolean registerUser(String name, String email,String street, String city, String telp,String country,
+			Double latitude, Double longitude);
 }

@@ -15,5 +15,17 @@ public interface BookingDTDRepository extends JpaRepository<BookingTempDTD, Stri
 	@Query("SELECT d FROM BookingTempDTD d where d.booking_id = ?1")
 	public BookingTempDTD findDataById(String booking_id);
 
+	@Query("SELECT d FROM BookingTempDTD d WHERE d.courier_from_id IS NULL OR d.courier_to_id IS NULL")
+	public List<BookingTempDTD> findBookingOnWaitingCourierConfirm();
+
+	@Query("SELECT d FROM BookingTempDTD d WHERE d.courier_from_id IS NOT NULL AND d.courier_to_id NOT IS NULL")
+	public List<BookingTempDTD> findBookingCourierAlreadyPickUp();
+
+	@Query("SELECT d FROM BookingTempDTD d WHERE d.deliverDate IS NOT NULL ")
+	public List<BookingTempDTD> findBookingOnDelivered();
+
+	@Query("SELECT d FROM BookingTempDTD d WHERE d.courier_from_id IS NOT NULL")
+	public List<BookingTempDTD> findBookingOnDelivery();
+
 	
 }

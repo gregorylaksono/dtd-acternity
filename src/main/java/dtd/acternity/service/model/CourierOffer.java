@@ -2,11 +2,14 @@ package dtd.acternity.service.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 @Entity
@@ -25,7 +28,11 @@ public class CourierOffer {
 	
 	@Transient
 	private Courier courier;
-	private String booking_id;
+	
+	@ManyToOne (cascade=CascadeType.ALL)
+	@JoinColumn(name="booking_data")
+	private BookingTempDTD bookingData;
+	
 	private boolean isPickup;
 	private boolean isStart;
 	
@@ -50,14 +57,12 @@ public class CourierOffer {
 	public void setCourier(Courier c) {
 		this.courier = c;
 	}
-	public void setBookingId(String booking_id) {
-		this.booking_id = booking_id;
+	
+	public BookingTempDTD getBookingData() {
+		return bookingData;
 	}
-	public String getBooking_id() {
-		return booking_id;
-	}
-	public void setBooking_id(String booking_id) {
-		this.booking_id = booking_id;
+	public void setBookingData(BookingTempDTD bookingData) {
+		this.bookingData = bookingData;
 	}
 	public Courier getCourier() {
 		return courier;
