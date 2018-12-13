@@ -2,16 +2,20 @@ package dtd.acternity.service.model.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import dtd.acternity.service.model.Courier;
 import dtd.acternity.service.model.Location;
 
 public class CourierOfferDTO {
 	
+	private Long id;
 	private Location location;
 	private Double price;
-	private Date acceptedOn;
 	
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm")
+	private Date acceptedOn;
+	private String address;
 	private CourierDTO courier;
 	private String booking_id;
 	private boolean isPickup;
@@ -58,6 +62,18 @@ public class CourierOfferDTO {
 	}
 	public void setCourier(CourierDTO courier) {
 		this.courier = courier;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	

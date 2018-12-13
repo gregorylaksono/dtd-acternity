@@ -2,11 +2,14 @@ package dtd.acternity.service.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -26,47 +29,35 @@ public class BookingTempDTD {
 	@Column(name = "oid", columnDefinition = "serial")
 	private Long id;
 	private String booking_id;
-	private String address_from;
-	private String address_to;
 	
-	@Transient
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name="from_location")
 	private Location from;
 	
-	@Transient
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name="to_location")
 	private Location to;
+	
 	private String itemDescription;
-	private String courier_from_id;
-	private String courier_to_id;
+	private Long courier_from_id;
+	private Long courier_to_id;
 	private Date expiration_date;
 	private String rate_id;
 	private String qr_data;
 	private Double pickup_price;
 	private Double deliver_price;
 	private Date deliverDate;
-	
-	public String getAddress_from() {
-		return address_from;
-	}
-	public void setAddress_from(String address_from) {
-		this.address_from = address_from;
-	}
-	public String getAddress_to() {
-		return address_to;
-	}
-	public void setAddress_to(String address_to) {
-		this.address_to = address_to;
-	}
 
-	public String getCourier_from_id() {
+	public Long getCourier_from_id() {
 		return courier_from_id;
 	}
-	public void setCourier_from_id(String courier_from_id) {
+	public void setCourier_from_id(Long courier_from_id) {
 		this.courier_from_id = courier_from_id;
 	}
-	public String getCourier_to_id() {
+	public Long getCourier_to_id() {
 		return courier_to_id;
 	}
-	public void setCourier_to_id(String courier_to_id) {
+	public void setCourier_to_id(Long courier_to_id) {
 		this.courier_to_id = courier_to_id;
 	}
 	public String getBooking_id() {
@@ -76,7 +67,8 @@ public class BookingTempDTD {
 		this.booking_id = booking_id;
 	}
 	public Date getExpiration_date() {
-		return (Date) expiration_date.clone();
+		if(expiration_date == null)return null;
+		else return (Date) expiration_date.clone();
 	}
 	public void setExpiration_date(Date expiration_date) {
 		this.expiration_date = expiration_date;

@@ -18,7 +18,7 @@ public interface BookingDTDRepository extends JpaRepository<BookingTempDTD, Stri
 	@Query("SELECT d FROM BookingTempDTD d WHERE d.courier_from_id IS NULL OR d.courier_to_id IS NULL")
 	public List<BookingTempDTD> findBookingOnWaitingCourierConfirm();
 
-	@Query("SELECT d FROM BookingTempDTD d WHERE d.courier_from_id IS NOT NULL AND d.courier_to_id NOT IS NULL")
+	@Query("SELECT d FROM BookingTempDTD d WHERE d.courier_from_id IS NOT NULL AND d.courier_to_id IS NOT NULL")
 	public List<BookingTempDTD> findBookingCourierAlreadyPickUp();
 
 	@Query("SELECT d FROM BookingTempDTD d WHERE d.deliverDate IS NOT NULL ")
@@ -26,6 +26,9 @@ public interface BookingDTDRepository extends JpaRepository<BookingTempDTD, Stri
 
 	@Query("SELECT d FROM BookingTempDTD d WHERE d.courier_from_id IS NOT NULL")
 	public List<BookingTempDTD> findBookingOnDelivery();
+
+	@Query("SELECT d FROM BookingTempDTD d, Location l WHERE d.from = l AND l.add_id = ?1")
+	public List<BookingTempDTD> getBookingByUserId(Long user_id);
 
 	
 }

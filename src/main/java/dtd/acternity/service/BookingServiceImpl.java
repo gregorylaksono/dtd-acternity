@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import de.act.common.interfaces.ILogin;
 import de.act.common.interfaces.Webservice;
@@ -18,36 +19,37 @@ import dtd.acternity.service.model.BookingTempDTD.BookingState;
 import dtd.acternity.util.RestUtil;
 import dtd.acternity.service.model.CourierOffer;
 
+@Service
 public class BookingServiceImpl implements IBookingService {
 	@Autowired
 	private BookingStageRepository bookingStageRepository;
-	
+
 	@Autowired
 	private BookingDTDRepository bookingTempRepository;
-	
+
 	@Autowired
 	private ICourierDataService courierDataService;
 
 	@Autowired
 	private IPushNotificationService pushNotificationService;
-	
+
 	@Autowired
 	private CourierOfferRepository courierOfferRepository;
-	
+
 	@Autowired
 	private BookingScheduleRepository bookingScheduleRepository;
-	
+
 	@Autowired
 	private RestUtil restConnectionUtil;
 
 	@Autowired
 	private Webservice mobileService;
-	
+
 	@Autowired
 	private ILogin loginService; 
 	@Override
 	public BookingTempDTD getBookingDataByBookingId(String bookingId) {
-		
+
 		return bookingTempRepository.findDataById(bookingId);
 	}
 
@@ -61,8 +63,8 @@ public class BookingServiceImpl implements IBookingService {
 		case DELIVERED: result = bookingTempRepository.findBookingOnDelivered();break;
 		case UNKNOWN : result = new ArrayList();break;
 		}
-		
-		
+
+
 		return result;
 	}
 
@@ -74,14 +76,29 @@ public class BookingServiceImpl implements IBookingService {
 	}
 
 	@Override
-	public List<CourierOffer> getCourierJobByBookingState(BookingState state) {
-		
-		return null;
+	public List<CourierOffer> getCourierJobByBookingState(BookingState state, Long user_id) {
+		List<CourierOffer> result = null;
+
+		switch(state){
+			case WAITING_COURIER_CONFIRM : result = courierOfferRepository.findBookingOnWaitingCourierConfirm(user_id);break;
+			case COURIER_PICKUP: result = courierOfferRepository.findBookingCourierAlreadyPickUp(user_id);break;
+			case DELIVERY : result = courierOfferRepository.findBookingOnDelivery(user_id); break;
+			case DELIVERED: result = courierOfferRepository.findBookingOnDelivered(user_id);break;
+			case UNKNOWN : result = new ArrayList();break;
+		}
+
+		return result;
 	}
 
 	@Override
 	public List<BookingSchedule> getScheduleByBookingId(String bookingId) {
 		return bookingScheduleRepository.findBookingScheduleByBookingId(bookingId);
+	}
+
+	@Override
+	public List<BookingTempDTD> getBookingByUserId(Long user_id) {
+		List<BookingTempDTD> bookings =  bookingTempRepository.getBookingByUserId(user_id);
+		return bookings;
 	}
 
 }

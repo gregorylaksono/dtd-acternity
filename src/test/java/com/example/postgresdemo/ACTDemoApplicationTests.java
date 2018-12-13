@@ -92,7 +92,12 @@ public class ACTDemoApplicationTests {
 	private BookingStageRepository bookingStageRepository;
 	
 	@Test
-	@Rollback(value=false)
+	public void func_test(){
+		Map consigneeMap = mobileService.getConsigneeAddress(123451042L);
+		Map shipperMap = mobileService.getShipperAddress(123451432L);
+		Assert.assertTrue(shipperMap.size() > 0);
+	}
+	
 	public void contextLoads() {
 		String fromLat = "48.3550665200702";
 		String fromLon = "11.770747194412252";
@@ -104,11 +109,10 @@ public class ACTDemoApplicationTests {
 		ISession session = loginService.login("bold", "ffw");
 
 		BookingTempDTD bookingData = new BookingTempDTD();
-		bookingData.setAddress_from("");
-		bookingData.setAddress_to("");
-		bookingData.setDeliverDate(new Date());
-		bookingData.setFrom(new Location("123451042", "customer 1 test", Double.parseDouble(fromLat), Double.parseDouble(fromLon)));
-		bookingData.setTo(new Location("123451432", "customer 2 test2", Double.parseDouble(toLat), Double.parseDouble(toLon)));
+		
+//		bookingData.setDeliverDate(new Date());
+//		bookingData.setFrom(new Location("123451042", "customer 1 test", Double.parseDouble(fromLat), Double.parseDouble(fromLon)));
+//		bookingData.setTo(new Location("123451432", "customer 2 test2", Double.parseDouble(toLat), Double.parseDouble(toLon)));
 		bookingData.setItemDescription("1354:0:asses |AVI|1|Each|1.0|1|1|1|1.0|| | | | | | ");
 		
 		
@@ -136,12 +140,12 @@ public class ACTDemoApplicationTests {
 		
 		BookingTempDTD data = bookingTempRepository.findDataById(bookingId);
 		Boolean isPickup = mainService.doPackageHandover(Double.parseDouble(fromLat), Double.parseDouble(fromLon), 
-				Long.parseLong(data.getCourier_from_id()), data.getBooking_id(), data.getQr_data());
+				data.getCourier_from_id(), data.getBooking_id(), data.getQr_data());
 		
 		Assert.assertTrue(isPickup);
 		
 		Assert.assertTrue(mainService.doPackageHandover(Double.parseDouble(toLat), Double.parseDouble(toLon), 
-				Long.parseLong(data.getCourier_to_id()), data.getBooking_id(), data.getQr_data()));
+				data.getCourier_to_id(), data.getBooking_id(), data.getQr_data()));
 		Assert.assertTrue(mainService.deliverBooking(Double.parseDouble(toLat), Double.parseDouble(toLon), 
 				data.getBooking_id(), "123451432"));
 		List<BookingStageDTD> stages = bookingStageRepository.findByBookingData(data);

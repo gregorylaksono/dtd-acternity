@@ -48,8 +48,6 @@ public class RestUtil {
 	}
 	
 	public static void main(String[] args) {
-		Location l1 = new Location("","",48.3550665200702 ,11.770747194412252);
-		Location l2 = new Location("","",47.3766969,8.540349299999999);
-		new RestUtil().getDistanceByTwoPoints(l1, l2);
+	
 	}
 }

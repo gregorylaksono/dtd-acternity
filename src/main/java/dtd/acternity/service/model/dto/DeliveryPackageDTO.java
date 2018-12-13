@@ -2,6 +2,9 @@ package dtd.acternity.service.model.dto;
 
 public class DeliveryPackageDTO {
 
+	private Double latitude;
+	private Double longitude;
+	private String booking;
 	public String getSubjectId() {
 		// TODO Auto-generated method stub
 		return null;

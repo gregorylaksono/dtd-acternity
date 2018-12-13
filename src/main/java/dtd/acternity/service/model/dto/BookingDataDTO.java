@@ -1,29 +1,43 @@
-package dtd.acternity.dtd;
+package dtd.acternity.service.model.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import dtd.acternity.service.model.Location;
 
-public class BookingData {
+public class BookingDataDTO {
 
+	@NotNull
 	private String booking_id;
-	private String address_from;
-	private String address_to;
 
+	@NotNull
 	private Location from;
-	
+	@NotNull
 	private Location to;
-	private String item_weight;
-	private String item_dimension;
-	private String courier_from_id;
-	private String courier_to_id;
+	
+	@NotNull
+	private String itemDescription;
+	
+	private Long courier_from_id;
+	
+	private Long courier_to_id;
+	
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm")
 	private Date expiration_date;
+	
 	private String rate_id;
 	private String qr_data;
 	private Double pickup_price;
 	private Double deliver_price;
+	
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm")
 	private Date deliverDate;
+	
+	
+	private Double total_rate;
 	
 	
 	public String getBooking_id() {
@@ -32,18 +46,7 @@ public class BookingData {
 	public void setBooking_id(String booking_id) {
 		this.booking_id = booking_id;
 	}
-	public String getAddress_from() {
-		return address_from;
-	}
-	public void setAddress_from(String address_from) {
-		this.address_from = address_from;
-	}
-	public String getAddress_to() {
-		return address_to;
-	}
-	public void setAddress_to(String address_to) {
-		this.address_to = address_to;
-	}
+
 	public Location getFrom() {
 		return from;
 	}
@@ -56,28 +59,17 @@ public class BookingData {
 	public void setTo(Location to) {
 		this.to = to;
 	}
-	public String getItem_weight() {
-		return item_weight;
-	}
-	public void setItem_weight(String item_weight) {
-		this.item_weight = item_weight;
-	}
-	public String getItem_dimension() {
-		return item_dimension;
-	}
-	public void setItem_dimension(String item_dimension) {
-		this.item_dimension = item_dimension;
-	}
-	public String getCourier_from_id() {
+
+	public Long getCourier_from_id() {
 		return courier_from_id;
 	}
-	public void setCourier_from_id(String courier_from_id) {
+	public void setCourier_from_id(Long courier_from_id) {
 		this.courier_from_id = courier_from_id;
 	}
-	public String getCourier_to_id() {
+	public Long getCourier_to_id() {
 		return courier_to_id;
 	}
-	public void setCourier_to_id(String courier_to_id) {
+	public void setCourier_to_id(Long courier_to_id) {
 		this.courier_to_id = courier_to_id;
 	}
 	public Date getExpiration_date() {
@@ -115,6 +107,18 @@ public class BookingData {
 	}
 	public void setDeliverDate(Date deliverDate) {
 		this.deliverDate = deliverDate;
+	}
+	public String getItemDescription() {
+		return itemDescription;
+	}
+	public void setItemDescription(String itemDescription) {
+		this.itemDescription = itemDescription;
+	}
+	public Double getTotal_rate() {
+		return total_rate;
+	}
+	public void setTotal_rate(Double total_rate) {
+		this.total_rate = total_rate;
 	}
 	
 	

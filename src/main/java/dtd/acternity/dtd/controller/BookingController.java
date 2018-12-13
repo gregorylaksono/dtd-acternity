@@ -1,5 +1,6 @@
 package dtd.acternity.dtd.controller;
 
+import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dtd.acternity.dtd.BookingData;
 import dtd.acternity.service.IBookingService;
 import dtd.acternity.service.IMainService;
 import dtd.acternity.service.model.BookingStageDTD;
 import dtd.acternity.service.model.BookingTempDTD;
 import dtd.acternity.service.model.BookingTempDTD.BookingState;
+import dtd.acternity.service.model.dto.BookingDataDTO;
 import dtd.acternity.service.model.dto.BookingStage;
+import dtd.acternity.service.model.dto.CourierOfferDTO;
 import dtd.acternity.service.model.dto.DeliveryPackageDTO;
 import dtd.acternity.util.GeneralUtil;
 
@@ -41,7 +43,7 @@ public class BookingController {
 	private IBookingService bookingService;
 	
 	@PostMapping("/create")
-	public ResponseEntity createBooking(@RequestBody(required = true) BookingData bookingData){
+	public ResponseEntity createBooking(@RequestBody(required = true) BookingDataDTO bookingData){
 		BookingTempDTD bookingDataEntity = modelMapper.map(bookingData, BookingTempDTD.class);
 		String bookingId = mainService.saveBookingRequestData(bookingDataEntity);
 		Map<String, Object> response = new HashMap<>();
@@ -53,15 +55,15 @@ public class BookingController {
 	public ResponseEntity getBookingByState(@PathVariable(name="state_id") Integer stateId){
 		BookingState state = GeneralUtil.convertToBookingState(stateId);
 		List<BookingTempDTD> bookings = bookingService.getBookingByState(state);
-	    java.lang.reflect.Type targetListType = new TypeToken<List<BookingData>>() {}.getType();
-	    List<BookingData> bookingResult = modelMapper.map(bookings, targetListType);
+	    java.lang.reflect.Type targetListType = new TypeToken<List<BookingDataDTO>>() {}.getType();
+	    List<BookingDataDTO> bookingResult = modelMapper.map(bookings, targetListType);
 		return ResponseEntity.ok(bookingResult);
 	}
 	
 	@PostMapping("/delivery")
-	public ResponseEntity markPackageAsDeliver(@RequestBody DeliveryPackageDTO deliveryInfo){
-		Boolean deliveryStatusInfo = mainService.deliverBooking(deliveryInfo.getLatitude(), deliveryInfo.getLongitude(), 
-				deliveryInfo.getBookingId(), deliveryInfo.getSubjectId());
+	public ResponseEntity markPackageAsDeliver(@RequestBody CourierOfferDTO deliveryInfo){
+		Boolean deliveryStatusInfo = mainService.deliverBooking(deliveryInfo.getLocation().getLatitude(), deliveryInfo.getLocation().getLongitude(), 
+				deliveryInfo.getBooking_id(), String.valueOf(deliveryInfo.getCourier().getId()));
 		if(deliveryStatusInfo){
 			return ResponseEntity.ok().build();
 		}else{
@@ -78,6 +80,5 @@ public class BookingController {
 	    List<BookingStage> bookingStageDtoResult = modelMapper.map(bookingStagesEntity, targetListType);
 		return ResponseEntity.ok(bookingStageDtoResult);
 	}
-	
 	
 }

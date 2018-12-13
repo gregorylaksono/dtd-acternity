@@ -19,14 +19,15 @@ public class CourierOffer {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "oid", columnDefinition = "serial")
 	private Long id;
-	private String address;
+
 	
 	@Transient
 	private Location location;
 	private Double price;
 	private Date acceptedOn;
 	
-	@Transient
+	@ManyToOne (cascade=CascadeType.PERSIST)
+	@JoinColumn(name="courier")
 	private Courier courier;
 	
 	@ManyToOne (cascade=CascadeType.ALL)
@@ -36,12 +37,7 @@ public class CourierOffer {
 	private boolean isPickup;
 	private boolean isStart;
 	
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
+
 	public Location getLocation() {
 		return location;
 	}
@@ -76,7 +72,7 @@ public class CourierOffer {
 	@Override
 	public boolean equals(Object obj) {
 		CourierOffer c = (CourierOffer) obj;
-		return this.courier.getId().longValue() == c.getCourier().getId().longValue();
+		return this.courier.getAdd_id().longValue() == c.getCourier().getAdd_id().longValue();
 	}
 	public boolean isPickup() {
 		return isPickup;

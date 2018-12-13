@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.remoting.rmi.RmiProxyFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import de.act.common.interfaces.ILogin;
 import de.act.common.interfaces.Webservice;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 @EnableJpaRepositories(basePackages = ("dtd.acternity.service.db.repository"))
 @EntityScan(basePackages = "dtd.acternity.service.model")
 @ComponentScan(basePackages="dtd.acternity")
+@EnableTransactionManagement
 public class ApplicationLauncher {
 
 	private static final Logger log = LoggerFactory.getLogger(ApplicationLauncher.class);

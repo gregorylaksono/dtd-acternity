@@ -37,10 +37,11 @@ public class CourierController {
 	@Autowired
 	private IMainService mainService;
 	
-	@GetMapping("/job/state/{state_id}")
-	public ResponseEntity getCouriersJobByState(@PathVariable("state_id") Integer state_id){
+	@GetMapping("/job/state/{state_id}/{user_id}")
+	public ResponseEntity getCouriersJobByState(@PathVariable("state_id") Integer state_id, 
+			@PathVariable("user_id") String user_id){
 		BookingState bookingState = GeneralUtil.convertToBookingState(state_id);
-		List<CourierOffer> couriersJobEntity = bookingService.getCourierJobByBookingState(bookingState);
+		List<CourierOffer> couriersJobEntity = bookingService.getCourierJobByBookingState(bookingState, Long.parseLong(user_id));
 		 java.lang.reflect.Type targetListType = new TypeToken<List<CourierOfferDTO>>() {}.getType();
 		 List<CourierOfferDTO> couriersJobDTOResult = modelMapper.map(couriersJobEntity, targetListType);
 		return ResponseEntity.ok(couriersJobDTOResult);
@@ -58,14 +59,6 @@ public class CourierController {
 		}
 	}
 	
-	
-	@GetMapping("/schedule/{booking_id}")
-	public ResponseEntity getScheduleByBookingId(@PathVariable("booking_id") String bookingId){
-		List<BookingSchedule> scheduleData = bookingService.getScheduleByBookingId(bookingId);
-		java.lang.reflect.Type targetListType = new TypeToken<List<ScheduleDTO>>() {}.getType();
-		List<ScheduleDTO> scheduleDto= modelMapper.map(scheduleData, targetListType);
-		return ResponseEntity.ok(scheduleDto);
-	}
 	
 	@PostMapping("/pickup")
 	public ResponseEntity courierPickup(@RequestBody CourierOfferDTO courierOffer){

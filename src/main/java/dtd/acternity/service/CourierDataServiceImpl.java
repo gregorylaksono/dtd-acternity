@@ -12,7 +12,7 @@ import dtd.acternity.service.model.Courier;
 import dtd.acternity.service.model.Location;
 
 @Service
-public class CourierDataService implements ICourierDataService {
+public class CourierDataServiceImpl implements ICourierDataService {
 
 	@Autowired
 	private CourierRepository courierRepository;
@@ -25,7 +25,7 @@ public class CourierDataService implements ICourierDataService {
 		
 		List<CourierInformation> pickupResult = 
 				mobileService.getCheckRangeInCourierByLatitudeLangitude(
-						location.getAdd_id_target(), String.valueOf(location.getLatitude()), 
+						String.valueOf(location.getAdd_id()), String.valueOf(location.getLatitude()), 
 						String.valueOf(location.getLongitude()));
 
 		return pickupResult;

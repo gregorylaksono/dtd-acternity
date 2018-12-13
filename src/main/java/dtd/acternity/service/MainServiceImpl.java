@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.act.common.dtd.ScheduleDoorToDoor;
 import de.act.common.interfaces.ILogin;
@@ -61,6 +63,7 @@ public class MainServiceImpl implements IMainService {
 	@Autowired
 	private ILogin loginService; 
 
+	@Transactional(propagation=Propagation.REQUIRED)
 	public String saveBookingRequestData(BookingTempDTD bookingData) {
 		String id = null;
 		try{
@@ -94,15 +97,14 @@ public class MainServiceImpl implements IMainService {
 			offer.setAcceptedOn(new Date());
 			courierOfferRepository.save(offer);
 			
-			if(courierOffer.isPickup()) {
-				data.setCourier_from_id(String.valueOf(courierOffer.getCourier().getId()));
+			if(offer.isPickup()) {
+				data.setCourier_from_id(courierOffer.getCourier().getId());
 				data.setPickup_price(courierOffer.getPrice());
 			}
 			else{
-				 data.setCourier_to_id(String.valueOf(courierOffer.getCourier().getId()));
+				 data.setCourier_to_id(courierOffer.getCourier().getId());
 				 data.setDeliver_price(courierOffer.getPrice());
 			}
-			
 			
 			bookingTempRepository.save(data);
 			List<CourierOffer> offers = courierOfferRepository.findCouriersByBookingData(data.getBooking_id());
@@ -132,7 +134,6 @@ public class MainServiceImpl implements IMainService {
 		//		Schedule l = scheduleDataService.getDataById(rate_id);
 		BookingTempDTD temp = bookingTempRepository.findDataById(booking_id);
 		temp.setRate_id(String.valueOf(rate_id));
-		List<CourierOffer> allOffer = courierOfferRepository.findAll();
 
 		bookingTempRepository.save(temp);
 		ISession session = loginService.login("bold", "ffw");
@@ -145,10 +146,7 @@ public class MainServiceImpl implements IMainService {
 
 	public Boolean courierUpdatePosition(Long courier_id, Double latitude, Double longitude) {
 		Courier courier = courierDataService.getCourierRepository().findById(courier_id).get();
-		if(courier.getLocation() == null){
-			Location l = new Location("","", 0D,0D);
-			courier.setLocation(l);
-		}
+		
 		courier.getLocation().setLatitude(latitude);
 		courier.getLocation().setLongitude(longitude);
 		courierDataService.getCourierRepository().save(courier);
@@ -164,16 +162,14 @@ public class MainServiceImpl implements IMainService {
 		return true;
 	}
 	
+	@Transactional(propagation=Propagation.REQUIRED)
 	private List<CourierOffer> createCourierOffer(BookingTempDTD bookingData, boolean isPickup) {
 		Location location = null;
-		String address = "";
 		if(isPickup){
 			location = bookingData.getFrom();
-			address = bookingData.getAddress_from();
 		}
 		else{
 			location = bookingData.getTo();
-			address = bookingData.getAddress_to();
 		}
 		List<CourierInformation> couriersInfo = courierDataService.getCourierBasedOnCoordinate(location);
 		List<CourierOffer> offers = new ArrayList();
@@ -183,7 +179,7 @@ public class MainServiceImpl implements IMainService {
 			
 			CourierOffer offer = new CourierOffer();
 			
-			Location courierLocation = new Location("","",Double.parseDouble(ci.getCourierLatitude()),Double.parseDouble(ci.getCourierLangitude()));
+			Location courierLocation = new Location((long)ci.getCourierAddId(),ci.getCourierAddName(),Double.parseDouble(ci.getCourierLatitude()),Double.parseDouble(ci.getCourierLangitude()));
 			Courier c = new Courier((long)ci.getCourierAddId(), ci.getCourierAddName(), ci.getRatePer(), courierLocation,"");
 			offer.setCourier(c);
 			
@@ -191,7 +187,6 @@ public class MainServiceImpl implements IMainService {
 			
 			offer.setPickup(isPickup);
 			offer.setLocation(location);
-			offer.setAddress(address);
 			double distance = restConnectionUtil.getDistanceByTwoPoints(bookingData.getFrom(), courierLocation) / 1000;
 			double price =  ci.getRatePer() * distance;
 			offer.setPrice(price);
@@ -230,13 +225,14 @@ public class MainServiceImpl implements IMainService {
 		Date now = new Date();
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DATE, 2);
+		
 		List<ScheduleDoorToDoor> result = mobileService.getDepAndArrAndRateByDistanceDepartureToDestinationsDTD(data.getBooking_id(), 
 				data.getFrom().getAddress(), data.getTo().getAddress(),
 				now ,c.getTime(), 
 				new String[]{data.getItemDescription()}, session.getUser(), 
-				Integer.parseInt(data.getFrom().getAdd_id_target()), 
+				data.getFrom().getAdd_id().intValue(), 
 				String.valueOf(data.getFrom().getLatitude()), String.valueOf(data.getFrom().getLongitude()),
-				Integer.parseInt(data.getTo().getAdd_id_target()),
+				data.getTo().getAdd_id().intValue(),
 				String.valueOf(data.getTo().getLatitude()), String.valueOf(data.getTo().getLongitude()),"");
 		return result;
 	}
