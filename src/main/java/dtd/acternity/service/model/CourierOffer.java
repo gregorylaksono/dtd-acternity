@@ -20,7 +20,6 @@ public class CourierOffer {
 	@Column(name = "oid", columnDefinition = "serial")
 	private Long id;
 
-	
 	@Transient
 	private Location location;
 	private Double price;

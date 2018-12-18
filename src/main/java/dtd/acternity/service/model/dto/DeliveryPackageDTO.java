@@ -6,7 +6,6 @@ public class DeliveryPackageDTO {
 	private Double longitude;
 	private String booking;
 	public String getSubjectId() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -15,6 +15,7 @@ public class BookingDataDTO {
 
 	@NotNull
 	private Location from;
+	
 	@NotNull
 	private Location to;
 	
@@ -35,7 +36,6 @@ public class BookingDataDTO {
 	
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm")
 	private Date deliverDate;
-	
 	
 	private Double total_rate;
 	

@@ -1,4 +1,4 @@
-package dtd.acternity.dtd.controller;
+package dtd.acternity.controller;
 
 import java.text.DateFormat;
 import java.util.HashMap;
@@ -26,6 +26,7 @@ import dtd.acternity.service.model.BookingTempDTD.BookingState;
 import dtd.acternity.service.model.dto.BookingDataDTO;
 import dtd.acternity.service.model.dto.BookingStage;
 import dtd.acternity.service.model.dto.CourierOfferDTO;
+import dtd.acternity.service.model.dto.CourierCommonInfoDTO;
 import dtd.acternity.service.model.dto.DeliveryPackageDTO;
 import dtd.acternity.util.GeneralUtil;
 
@@ -61,7 +62,7 @@ public class BookingController {
 	}
 	
 	@PostMapping("/delivery")
-	public ResponseEntity markPackageAsDeliver(@RequestBody CourierOfferDTO deliveryInfo){
+	public ResponseEntity markPackageAsDeliver(@RequestBody CourierCommonInfoDTO deliveryInfo){
 		Boolean deliveryStatusInfo = mainService.deliverBooking(deliveryInfo.getLocation().getLatitude(), deliveryInfo.getLocation().getLongitude(), 
 				deliveryInfo.getBooking_id(), String.valueOf(deliveryInfo.getCourier().getId()));
 		if(deliveryStatusInfo){

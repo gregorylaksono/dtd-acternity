@@ -1,4 +1,4 @@
-package dtd.acternity.dtd;
+package dtd.acternity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

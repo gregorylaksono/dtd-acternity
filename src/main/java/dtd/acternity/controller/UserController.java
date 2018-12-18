@@ -1,4 +1,4 @@
-package dtd.acternity.dtd.controller;
+package dtd.acternity.controller;
 
 import java.util.List;
 

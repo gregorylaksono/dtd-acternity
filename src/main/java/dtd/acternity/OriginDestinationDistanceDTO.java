@@ -1,4 +1,4 @@
-package dtd.acternity.dtd;
+package dtd.acternity;
 
 public class OriginDestinationDistanceDTO {
 

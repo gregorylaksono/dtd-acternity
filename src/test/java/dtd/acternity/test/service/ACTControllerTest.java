@@ -1,4 +1,4 @@
-package com.example.postgresdemo;
+package dtd.acternity.test.service;
 
 import java.util.Date;
 import java.util.List;

@@ -1,4 +1,4 @@
-package dtd.acternity.dtd.controller;
+package dtd.acternity.controller;
 
 import java.util.List;
 
@@ -20,6 +20,7 @@ import dtd.acternity.service.model.BookingSchedule;
 import dtd.acternity.service.model.BookingTempDTD;
 import dtd.acternity.service.model.BookingTempDTD.BookingState;
 import dtd.acternity.service.model.CourierOffer;
+import dtd.acternity.service.model.dto.CourierCommonInfoDTO;
 import dtd.acternity.service.model.dto.CourierOfferDTO;
 import dtd.acternity.service.model.dto.ScheduleDTO;
 import dtd.acternity.util.GeneralUtil;
@@ -61,10 +62,10 @@ public class CourierController {
 	
 	
 	@PostMapping("/pickup")
-	public ResponseEntity courierPickup(@RequestBody CourierOfferDTO courierOffer){
-		BookingTempDTD bookingData = bookingService.getBookingDataByBookingId(courierOffer.getBooking_id());
-		Boolean isPickUpSuccess = mainService.doPackageHandover(courierOffer.getLocation().getLatitude(), courierOffer.getLocation().getLongitude(),
-				courierOffer.getCourier().getId(), courierOffer.getBooking_id(), bookingData.getQr_data());
+	public ResponseEntity courierPickup(@RequestBody CourierCommonInfoDTO courierInfo){
+		BookingTempDTD bookingData = bookingService.getBookingDataByBookingId(courierInfo.getBooking_id());
+		Boolean isPickUpSuccess = mainService.doPackageHandover(courierInfo.getLocation().getLatitude(), courierInfo.getLocation().getLongitude(),
+				courierInfo.getCourier().getId(), courierInfo.getBooking_id(), bookingData.getQr_data());
 		if(isPickUpSuccess){
 			return ResponseEntity.status(HttpStatus.ACCEPTED).build();
 		}else{
