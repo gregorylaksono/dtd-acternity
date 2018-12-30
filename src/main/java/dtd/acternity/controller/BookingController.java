@@ -61,6 +61,12 @@ public class BookingController {
 		return ResponseEntity.ok(bookingResult);
 	}
 	
+	@GetMapping("/courier/{booking_id}")
+	public ResponseEntity getCourierChoice(@PathVariable(name="booking_id") Integer stateId){
+		
+		return ResponseEntity.ok(null);
+	}
+	
 	@PostMapping("/delivery")
 	public ResponseEntity markPackageAsDeliver(@RequestBody CourierCommonInfoDTO deliveryInfo){
 		Boolean deliveryStatusInfo = mainService.deliverBooking(deliveryInfo.getLocation().getLatitude(), deliveryInfo.getLocation().getLongitude(), 

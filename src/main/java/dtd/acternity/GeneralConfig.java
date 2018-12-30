@@ -25,7 +25,7 @@ public class GeneralConfig {
 
 	@Bean
 	public ModelMapper getModelMapper(){
-		ModelMapper mapper = new ModelMapper();
+		final ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		Converter<CourierOffer, CourierOfferDTO> courierOfferDTOConverter = new Converter<CourierOffer, CourierOfferDTO>()
 		{

@@ -28,6 +28,9 @@ public class Courier {
 	private Location location;
 	
 	private String token_device;
+	
+	@Transient
+	private Double rating;
 
 	public Courier(Long id, String name, Double price, Location location, String token) {
 		setAdd_id(id);
@@ -80,6 +83,14 @@ public class Courier {
 
 	public void setAdd_id(Long add_id) {
 		this.add_id = add_id;
+	}
+
+	public Double getRating() {
+		return rating;
+	}
+
+	public void setRating(Double rating) {
+		this.rating = rating;
 	}
 
 

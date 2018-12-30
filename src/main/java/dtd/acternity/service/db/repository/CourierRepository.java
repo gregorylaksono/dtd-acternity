@@ -14,5 +14,8 @@ import dtd.acternity.service.model.Location;
 
 public interface CourierRepository extends JpaRepository<Courier, Long> {
 
+	@Query("SELECT c FROM Courier c WHERE c.add_id = ?1")
+	Courier findByAddId(Long add_id);
+
 
 }

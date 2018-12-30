@@ -14,5 +14,6 @@ public interface IPushNotificationService {
 	public BookingStageDTD getCourierBookingStage(String booking_id);
 	public void sendOfferToCourier(List<CourierOffer> shippmentOffer);
 	public void sendPickupOrderToCourier(Courier c, BookingTempDTD temp);
+	public void notifyCustomerCourierAvailable(String booking_id);
 	
 }

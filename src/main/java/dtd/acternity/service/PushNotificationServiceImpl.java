@@ -66,6 +66,10 @@ public class PushNotificationServiceImpl implements IPushNotificationService {
 //		
 //		
 //	}
+	@Override
+	public void notifyCustomerCourierAvailable(String booking_id) {
+		
+	}
 
 
 }

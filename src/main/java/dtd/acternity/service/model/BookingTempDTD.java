@@ -47,7 +47,8 @@ public class BookingTempDTD {
 	private Double pickup_price;
 	private Double deliver_price;
 	private Date deliverDate;
-
+	private boolean isSameCity;
+	
 	public Long getCourier_from_id() {
 		return courier_from_id;
 	}
@@ -126,6 +127,12 @@ public class BookingTempDTD {
 	}
 	public void setItemDescription(String itemDescription) {
 		this.itemDescription = itemDescription;
+	}
+	public boolean isSameCity() {
+		return isSameCity;
+	}
+	public void setSameCity(boolean isSameCity) {
+		this.isSameCity = isSameCity;
 	}
 
 	

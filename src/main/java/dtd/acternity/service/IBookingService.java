@@ -19,4 +19,5 @@ public interface IBookingService {
 	
 	List<BookingSchedule> getScheduleByBookingId(String bookingId);
 	List<BookingTempDTD> getBookingByUserId(Long user_id);
+	
 }
